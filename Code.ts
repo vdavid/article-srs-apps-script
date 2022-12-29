@@ -34,7 +34,9 @@ function sendArticleReminder(recipients: string[], logSendingEvent: boolean): vo
         const emailBody = ArticleEmailSender.convertArticlesToHtml(articles)
         ArticleEmailSender.sendEmail(recipients, emailBody)
 
-        if (logSendingEvent) { SpreadsheetHandler.logSending(articles) }
+        if (logSendingEvent) {
+            SpreadsheetHandler.logSending(articles)
+        }
     }
 }
 
@@ -61,7 +63,7 @@ function doPost(request: { parameter: HttpParameters }): GoogleAppsScript.Conten
     return handleResponse(request.parameter)
 }
 
-type HttpParameters = {
+interface HttpParameters {
     emailAddress?: string
     hungarianPosts?: string
     englishPosts?: string
@@ -73,19 +75,28 @@ function handleResponse(parameters: HttpParameters): GoogleAppsScript.Content.Te
        More info: http://googleappsdeveloper.blogspot.co.uk/2011/10/concurrency-and-google-apps-script.html */
 
     const lock = LockService.getScriptLock()
-    lock.waitLock(10000)  /* Wait 10 seconds before conceding defeat */
+    lock.waitLock(10000) /* Wait 10 seconds before conceding defeat */
 
     try {
-        const newRow = SpreadsheetHandler.addSubscription(parameters.emailAddress, parameters.hungarianPosts === '1', parameters.englishPosts === '1', parameters.articleSrs === '1')
+        const newRow = SpreadsheetHandler.addSubscription(
+            parameters.emailAddress,
+            parameters.hungarianPosts === '1',
+            parameters.englishPosts === '1',
+            parameters.articleSrs === '1'
+        )
 
         lock.releaseLock()
-        return assembleJsonOutput({ result: 'success', newRow: newRow })
+        return assembleJsonOutput({ result: 'success', newRow })
     } catch (error) {
         lock.releaseLock()
-        return assembleJsonOutput({ result: 'error', error: error })
+        return assembleJsonOutput({ result: 'error', error: error as Error })
     }
 
-    function assembleJsonOutput(object): GoogleAppsScript.Content.TextOutput {
+    function assembleJsonOutput(object: {
+        result: string
+        newRow?: number
+        error?: Error
+    }): GoogleAppsScript.Content.TextOutput {
         return ContentService.createTextOutput(JSON.stringify(object)).setMimeType(ContentService.MimeType.JSON)
     }
 }

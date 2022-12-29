@@ -3,6 +3,7 @@
     "lib": [
       "esnext"
     ],
+    "target": "es6",
     "experimentalDecorators": true
   }
 }
