@@ -1,0 +1,27 @@
+{
+  "name": "article-srs-apps-script",
+  "version": "1.0.0",
+  "description": "Sends daily emails based on my article reviews and SRS spreadsheet",
+  "main": "Code.ts",
+  "author": "David Veszelovszki",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "push": "clasp push",
+    "watch": "clasp push --watch"
+  },
+  "devDependencies": {
+    "@types/google-apps-script": "^1.0.56",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "eslint": "^8.28.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-ban": "^1.6.0",
+    "eslint-plugin-etc": "^2.0.2",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-unicorn": "^45.0.1",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "prettier": "^2.8.0",
+    "typescript": "^4.9.3"
+  }
+}
