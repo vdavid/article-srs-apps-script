@@ -32,49 +32,55 @@
  * Version history
  * ===============
  *   - 2018-08-25 Project created, first version of script written.
+ *   - 2022-12-29 Moved it to Clasp with TypeScript
  *
  * License
  * =======
  *
- * Copyright (c) 2018 Dávid Veszelovszki (veszelovszki@gmail.com)
+ * Copyright (c) 2018–2022 David Veszelovszki (veszelovszki@gmail.com)
  */
 
-function sendArticleReminderToDavid() {
-    sendArticleReminder({recipients: ['veszelovszki@gmail.com'], logSendingEvent: false});
+type Article = {
+    url: string
+    readDate: Date
+    title: string
+    tags: string[]
+    characterCount: number
+    workCount: number
+    language: string
+    authors: string[]
+    publicationDate: Date | undefined
+    minutes: number
+    rating: number
+    review: string
+    category: string
 }
 
-function sendArticleReminderToOthers() {
-    const spreadsheetHandler = new SpreadsheetHandler();
-    const recipients = spreadsheetHandler.loadEmailRecipients();
-
-    sendArticleReminder({recipients, logSendingEvent: true});
+// noinspection JSUnusedGlobalSymbols
+function sendArticleReminderToDavid(): void {
+    sendArticleReminder(['veszelovszki@gmail.com'], false)
 }
 
-/**
- * Collects data, sends an email and marks the sending event
- *
- * @param {string[]} recipients Email addresses to send to
- * @param {boolean} logSendingEvent True if the sending should be logged in the spreadsheet, false if it should be kept silent.
- */
-function sendArticleReminder({recipients, logSendingEvent}) {
-    const spreadsheetHandler = new SpreadsheetHandler();
-    const articleEmailSender = new ArticleEmailSender();
+// noinspection JSUnusedGlobalSymbols
+function sendArticleReminderToOthers(): void {
+    const recipients = SpreadsheetHandler.loadEmailRecipients()
 
-    const articleCount = spreadsheetHandler.getDailyArticleCount();
+    sendArticleReminder(recipients, true)
+}
+
+function sendArticleReminder(recipients: string[], logSendingEvent: boolean): void {
+    const articleCount = SpreadsheetHandler.getDailyArticleCount()
 
     if (articleCount > 0) {
-        const articles = spreadsheetHandler.loadArticles(articleCount);
-        const emailBody = articleEmailSender.convertArticlesToHtml(articles);
-        const sendingResult = articleEmailSender.sendEmail(recipients, emailBody);
+        const articles = SpreadsheetHandler.loadArticles(articleCount)
+        const emailBody = ArticleEmailSender.convertArticlesToHtml(articles)
+        ArticleEmailSender.sendEmail(recipients, emailBody)
 
-        if (logSendingEvent) { spreadsheetHandler.logSending(articles); }
+        if (logSendingEvent) { SpreadsheetHandler.logSending(articles) }
     }
 }
 
-
 /* Source: https://gist.github.com/mhawksey/1276293 (by Martin Hawksey, 2011) */
-
-var SHEET_NAME = "Subscriptions";
 
 // How to use:
 
@@ -87,32 +93,41 @@ var SHEET_NAME = "Subscriptions";
 //  5. Insert column names on your destination sheet matching the parameter names of the data you are passing in (exactly matching case)
 
 // If you don't want to expose either GET or POST methods you can comment out the appropriate function
-function doGet(request) {
-    return handleResponse(request.parameter);
+// noinspection JSUnusedGlobalSymbols
+function doGet(request: { parameter: HttpParameters }): GoogleAppsScript.Content.TextOutput {
+    return handleResponse(request.parameter)
 }
 
-function doPost(request) {
-    return handleResponse(request.parameter);
+// noinspection JSUnusedGlobalSymbols
+function doPost(request: { parameter: HttpParameters }): GoogleAppsScript.Content.TextOutput {
+    return handleResponse(request.parameter)
 }
 
-function handleResponse(parameters) {
-    /* A public lock to prevent concurrent access overwritting data.
+type HttpParameters = {
+    emailAddress?: string
+    hungarianPosts?: string
+    englishPosts?: string
+    articleSrs?: string
+}
+
+function handleResponse(parameters: HttpParameters): GoogleAppsScript.Content.TextOutput {
+    /* A public lock to prevent concurrent access overwriting data.
        More info: http://googleappsdeveloper.blogspot.co.uk/2011/10/concurrency-and-google-apps-script.html */
 
-    var lock = LockService.getPublicLock();
-    lock.waitLock(10000);  /* Wait 10 seconds before conceding defeat */
+    const lock = LockService.getScriptLock()
+    lock.waitLock(10000)  /* Wait 10 seconds before conceding defeat */
 
     try {
-        const newRow = spreadsheetHandler.addSubscription(parameters.emailAddress, parameters.hungarianPosts, parameters.englishPosts, parameters.articleSrs);
+        const newRow = SpreadsheetHandler.addSubscription(parameters.emailAddress, parameters.hungarianPosts === '1', parameters.englishPosts === '1', parameters.articleSrs === '1')
 
-        lock.releaseLock();
-        return assembleJsonOutput({result: "success", newRow: newRow});
-    } catch(error){
-        lock.releaseLock();
-        return assembleJsonOutput({result: "error", error: error});
+        lock.releaseLock()
+        return assembleJsonOutput({ result: 'success', newRow: newRow })
+    } catch (error) {
+        lock.releaseLock()
+        return assembleJsonOutput({ result: 'error', error: error })
     }
 
-    function assembleJsonOutput(object) {
-        return ContentService.createTextOutput(JSON.stringify(object)).setMimeType(ContentService.MimeType.JSON);
+    function assembleJsonOutput(object): GoogleAppsScript.Content.TextOutput {
+        return ContentService.createTextOutput(JSON.stringify(object)).setMimeType(ContentService.MimeType.JSON)
     }
 }
