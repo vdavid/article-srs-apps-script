@@ -1,0 +1,6 @@
+/.idea
+/coverage
+.eslintrc.gs
+*.test.gs
+jest.config.gs
+prettier.config.gs
