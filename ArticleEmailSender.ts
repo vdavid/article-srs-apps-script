@@ -2,24 +2,24 @@ namespace ArticleEmailSender {
     export function convertArticlesToHtml(articles: Article[]): string {
         const body =
             articles.reduce(
-                (result, article) => {
+                (acc, article) => {
                     const categoryHeader =
-                        article.category === result.lastCategory
+                        article.category === acc.lastCategory
                             ? ''
-                            : (result.lastCategory ? '</ul>\n' : '') + getCategoryHeader(article.category)
+                            : (acc.lastCategory ? '</ul>\n' : '') + getCategoryHeader(article.category)
 
                     return {
-                        html: result.html + categoryHeader + convertArticleToHtml(article),
+                        html: acc.html + categoryHeader + convertArticleToHtml(article),
                         lastCategory: article.category,
                     }
                 },
                 { html: '', lastCategory: '' }
-            ).html + '</ul>'
+            ).html + '\n</ul>'
 
         return assembleEmailHeader() + body + assembleEmailFooter()
     }
 
-    function assembleEmailHeader(): string {
+    export function assembleEmailHeader(): string {
         const css =
             '    li { list-style:none; margin-left:0; border-left:4px solid; padding-left:5px; margin-bottom:2px; }\n' +
             'li.rating1 { border-left-color:#cc4125; }\n' +
@@ -42,11 +42,18 @@ namespace ArticleEmailSender {
 `
     }
 
-    function convertArticleToHtml(article: Article): string {
+    export function convertArticleToHtml(article: Article): string {
         /* Pre-formats parts of the line of data */
-        const titleLink = `<strong><a href="${article.url}">${escapeHtml(article.title)}</a></strong>`
+        const flag = article.language === 'en' ? '🇺🇸' : '🇭🇺'
+        const title = article.isUrlDead
+            ? `<strong>${escapeHtml(article.title)}</strong>`
+            : `<strong><a href="${article.url}">${escapeHtml(article.title)}</a></strong>`
         const authorInfo = article.authors[0] ? ` <em>by ${article.authors.join(', ')}</em>` : ''
+
         const objectiveProperties = []
+        if (article.isUrlDead) {
+            objectiveProperties.push(`<a href="${article.url}">dead link</a>`)
+        }
         if (article.publicationDate) {
             objectiveProperties.push(article.publicationDate.toISOString().slice(0, 10))
         }
@@ -57,12 +64,12 @@ namespace ArticleEmailSender {
             'Read date: ' + article.readDate.toISOString().slice(0, 10),
             `Rating: ${article.rating} / 10`,
         ]
+
         const pocketUrl = 'https://getpocket.com/edit?url=' + article.url
 
         /* Assembles <li> */
-        return `<li class="rating${article.rating}">${titleLink}${authorInfo}${
-            objectiveProperties.length ? ' (' + objectiveProperties.join(', ') + ')' : ''
-        }<br />
+        return `<li class="rating${article.rating}">${flag}
+  ${title}${authorInfo}${objectiveProperties.length ? ' (' + objectiveProperties.join(', ') + ')' : ''}<br />
   ${escapeHtml(article.review)}<br />
   <em>(${subjectiveProperties.join(', ')})</em> — <a class="pocketLink" href="${pocketUrl}">Add to Pocket</a>
 </li>

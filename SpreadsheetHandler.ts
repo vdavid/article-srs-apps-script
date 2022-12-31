@@ -50,7 +50,6 @@ namespace SpreadsheetHandler {
         const request: any = {}
 
         // we'll assume header is in row 1, but you can override with header_row in GET/POST data
-        // noinspection JSUnusedLocalSymbols
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
         const headRow = request.parameter.header_row || 1
         const headers = subscriptionsSheet.getRange(1, 1, 1, subscriptionsSheet.getLastColumn()).getValues()[0]
@@ -76,13 +75,14 @@ namespace SpreadsheetHandler {
     function convertRowToArticle(row: string[]): Article | null {
         return row[2]
             ? {
-                  url: row[0],
+                  url: row[0].startsWith('DELETED - ') ? row[0].slice(10) : row[0],
+                  isUrlDead: row[0].startsWith('DELETED - '),
                   readDate: new Date(row[1]),
                   title: row[2],
                   tags: row[3].split(','),
                   characterCount: parseInt(row[4], 10),
-                  workCount: parseInt(row[5], 10),
-                  language: row[6] === 'EN' ? 'English' : row[6] === 'HU' ? 'Hungarian' : row[6],
+                  wordCount: parseInt(row[5], 10),
+                  language: row[6] === 'EN' ? 'en' : row[6] === 'HU' ? 'hu' : 'other',
                   authors: row[7].split(','),
                   publicationDate: row[8] ? new Date(row[8]) : undefined,
                   minutes: parseInt(row[9], 10),

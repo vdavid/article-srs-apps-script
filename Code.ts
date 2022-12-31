@@ -1,16 +1,17 @@
 interface Article {
     url: string
+    isUrlDead: boolean
     readDate: Date
     title: string
     tags: string[]
     characterCount: number
-    workCount: number
-    language: string
+    wordCount: number
+    language: 'en' | 'hu' | 'other'
     authors: string[]
     publicationDate: Date | undefined
-    minutes: number
-    rating: number
-    review: string
+    minutes: number // float
+    rating: number // 1 to 10
+    review: string // May have markdown-like underscores and asterisks
     category: string
 }
 

@@ -238,7 +238,6 @@ module.exports = {
 
     // Previous Rules that has been causing errors after upgrading
     'unicorn/consistent-function-scoping': 'off',
-    'rxjs/no-nested-subscribe': 'off',
     // End
   },
   overrides: [
@@ -375,7 +374,6 @@ module.exports = {
       files: '*.@(test|story).ts?(x)',
       rules: {
         '@typescript-eslint/explicit-function-return-type': 'off',
-        'rxjs/no-ignored-subscription': 'warn',
         'unicorn/consistent-function-scoping': 'off',
       },
     },
