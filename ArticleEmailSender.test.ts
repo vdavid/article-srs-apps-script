@@ -1,5 +1,6 @@
 const article = {
-    url: 'https://example.com/1',
+    url: 'https://example.com/2',
+    originalUrl: 'https://example.com/1',
     isUrlDead: false,
     readDate: new Date('2021-01-01'),
     title: 'Title 1',

@@ -8,7 +8,7 @@ namespace SpreadsheetHandler {
     const subscriptionsSheet = spreadsheet.getSheetByName('Subscriptions')
 
     export function loadArticles(count: number): Article[] {
-        const rows = nextArticlesSheet.getRange(2, 1, count, 13).getValues()
+        const rows = nextArticlesSheet.getRange(2, 1, count, 14).getValues()
         return rows.map(row => convertRowToArticle(row)).filter(article => article)
     }
 
@@ -27,7 +27,7 @@ namespace SpreadsheetHandler {
 
         const today = new Date().toISOString().slice(0, 10)
         for (const [index, article] of articles.entries()) {
-            logSheet.getRange(rowIndex + index, 1, 1, 2).setValues([[today, article.url]])
+            logSheet.getRange(rowIndex + index, 1, 1, 2).setValues([[today, article.originalUrl]])
         }
     }
 
@@ -73,22 +73,23 @@ namespace SpreadsheetHandler {
     }
 
     function convertRowToArticle(row: string[]): Article | null {
-        return row[2]
+        return row[3]
             ? {
                   url: row[0].startsWith('DELETED - ') ? row[0].slice(10) : row[0],
+                  originalUrl: row[1],
                   isUrlDead: row[0].startsWith('DELETED - '),
-                  readDate: new Date(row[1]),
-                  title: row[2],
-                  tags: row[3].split(','),
-                  characterCount: parseInt(row[4], 10),
-                  wordCount: parseInt(row[5], 10),
-                  language: row[6] === 'EN' ? 'en' : row[6] === 'HU' ? 'hu' : 'other',
-                  authors: row[7].split(','),
-                  publicationDate: row[8] ? new Date(row[8]) : undefined,
-                  minutes: parseInt(row[9], 10),
-                  rating: parseInt(row[10], 10),
-                  review: row[11],
-                  category: row[12] || '(uncategorized)',
+                  readDate: new Date(row[2]),
+                  title: row[3],
+                  tags: row[4].split(','),
+                  characterCount: parseInt(row[5], 10),
+                  wordCount: parseInt(row[6], 10),
+                  language: row[7] === 'EN' ? 'en' : row[7] === 'HU' ? 'hu' : 'other',
+                  authors: row[8].split(','),
+                  publicationDate: row[9] ? new Date(row[9]) : undefined,
+                  minutes: parseInt(row[10], 10),
+                  rating: parseInt(row[11], 10),
+                  review: row[12],
+                  category: row[13] || '(uncategorized)',
               }
             : null
     }

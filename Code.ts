@@ -1,5 +1,6 @@
 interface Article {
     url: string
+    originalUrl: string // Might be broken, but this is sort of the ID of the article
     isUrlDead: boolean
     readDate: Date
     title: string
