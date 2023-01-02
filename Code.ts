@@ -1,4 +1,7 @@
-interface Article {
+import { ArticleEmailSender } from './ArticleEmailSender'
+import { SpreadsheetHandler } from './SpreadsheetHandler'
+
+export interface Article {
     url: string
     originalUrl: string // Might be broken, but this is sort of the ID of the article
     isUrlDead: boolean
@@ -16,12 +19,12 @@ interface Article {
     category: string
 }
 
-// noinspection JSUnusedGlobalSymbols
+// noinspection JSUnusedLocalSymbols
 function sendArticleReminderToDavid(): void {
     sendArticleReminder(['veszelovszki@gmail.com'], false)
 }
 
-// noinspection JSUnusedGlobalSymbols
+// noinspection JSUnusedLocalSymbols
 function sendArticleReminderToOthers(): void {
     const recipients = SpreadsheetHandler.loadEmailRecipients()
 
@@ -55,12 +58,12 @@ function sendArticleReminder(recipients: string[], logSendingEvent: boolean): vo
 //  5. Insert column names on your destination sheet matching the parameter names of the data you are passing in (exactly matching case)
 
 // If you don't want to expose either GET or POST methods you can comment out the appropriate function
-// noinspection JSUnusedGlobalSymbols
+// noinspection JSUnusedLocalSymbols
 function doGet(request: { parameter: HttpParameters }): GoogleAppsScript.Content.TextOutput {
     return handleResponse(request.parameter)
 }
 
-// noinspection JSUnusedGlobalSymbols
+// noinspection JSUnusedLocalSymbols
 function doPost(request: { parameter: HttpParameters }): GoogleAppsScript.Content.TextOutput {
     return handleResponse(request.parameter)
 }

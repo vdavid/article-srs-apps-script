@@ -1,4 +1,6 @@
-namespace ArticleEmailSender {
+import { Article } from './Code'
+
+export namespace ArticleEmailSender {
     export function convertArticlesToHtml(articles: Article[]): string {
         const body =
             articles.reduce(

@@ -1,3 +1,6 @@
+import { ArticleEmailSender } from './ArticleEmailSender'
+import { Article } from './Code'
+
 const article = {
     url: 'https://example.com/2',
     originalUrl: 'https://example.com/1',
@@ -21,9 +24,9 @@ describe('convertArticleToHtml', () => {
         const html = ArticleEmailSender.convertArticleToHtml(article)
 
         const expectedHtml = `<li class="rating8">🇺🇸
-  <strong><a href="https://example.com/1">Title 1</a></strong> <em>by Author 1, Author 2</em> (1999-01-01, 5 minutes)<br />
+  <strong><a href="https://example.com/2">Title 1</a></strong> <em>by Author 1, Author 2</em> (1999-01-01, 5 minutes)<br />
   Review test<br />
-  <em>(Read date: 2021-01-01, Rating: 8 / 10)</em> — <a class="pocketLink" href="https://getpocket.com/edit?url=https://example.com/1">Add to Pocket</a>
+  <em>(Read date: 2021-01-01, Rating: 8 / 10)</em> — <a class="pocketLink" href="https://getpocket.com/edit?url=https://example.com/2">Add to Pocket</a>
 </li>
 `
 
@@ -36,9 +39,9 @@ describe('convertArticleToHtml', () => {
         const html = ArticleEmailSender.convertArticleToHtml(article2)
 
         const expectedHtml = `<li class="rating8">🇺🇸
-  <strong>Title 1</strong> <em>by Author 1, Author 2</em> (<a href="https://example.com/1">dead link</a>, 1999-01-01, 5 minutes)<br />
+  <strong>Title 1</strong> <em>by Author 1, Author 2</em> (<a href="https://example.com/2">dead link</a>, 1999-01-01, 5 minutes)<br />
   Review test<br />
-  <em>(Read date: 2021-01-01, Rating: 8 / 10)</em> — <a class="pocketLink" href="https://getpocket.com/edit?url=https://example.com/1">Add to Pocket</a>
+  <em>(Read date: 2021-01-01, Rating: 8 / 10)</em> — <a class="pocketLink" href="https://getpocket.com/edit?url=https://example.com/2">Add to Pocket</a>
 </li>
 `
 

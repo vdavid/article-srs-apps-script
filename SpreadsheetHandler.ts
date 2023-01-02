@@ -1,6 +1,8 @@
+import { Article } from './Code'
+
 const spreadsheetID = PropertiesService.getScriptProperties().getProperty('spreadsheetID')
 
-namespace SpreadsheetHandler {
+export namespace SpreadsheetHandler {
     const spreadsheet = SpreadsheetApp.openById(spreadsheetID)
     const nextArticlesSheet = spreadsheet.getSheetByName('Next')
     const logSheet = spreadsheet.getSheetByName('Log')
